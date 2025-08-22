@@ -125,7 +125,7 @@ export default function SubstackFinder() {
           
           <h1 className={`md:text-4xl text-2xl mb-8 font-medium opacity-0 animate-fade-up [animation-delay:300ms] ${
             !searchQuery && !isGenerating && searchResults.length === 0 
-              ? 'mt-28 md:mt-56' 
+              ? 'mt-0' 
               : 'mt-2 md:mt-2'
           }`}>
             Search across Substack using Exa AI

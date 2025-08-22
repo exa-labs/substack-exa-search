@@ -30,15 +30,12 @@ export default function SearchSuggestions({ onSuggestionClick }: SearchSuggestio
 
   return (
     <div className="opacity-0 animate-fade-up [animation-delay:500ms]">
-      <h2 className="text-xl font-normal mb-6 text-gray-800">
-        Popular Topics
-      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {suggestions.map((suggestion, index) => (
-          <div
+          <button
             key={index}
             onClick={() => onSuggestionClick(suggestion.query)}
-            className="p-4 bg-secondary-faint hover:bg-secondary-fainter border rounded-sm cursor-pointer transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 opacity-0 animate-fade-up"
+            className="p-4 border border-gray-300 rounded-none hover:border-brand-default hover:bg-brand-fainter transition-all duration-200 cursor-pointer text-left opacity-0 animate-fade-up"
             style={{ animationDelay: `${600 + index * 100}ms` }}
           >
             <h3 className="font-medium text-gray-800 mb-2">
@@ -47,7 +44,7 @@ export default function SearchSuggestions({ onSuggestionClick }: SearchSuggestio
             <p className="text-sm text-gray-600">
               {suggestion.description}
             </p>
-          </div>
+          </button>
         ))}
       </div>
     </div>
