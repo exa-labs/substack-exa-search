@@ -29,7 +29,7 @@ export default function SearchSuggestions({ onSuggestionClick }: SearchSuggestio
   ];
 
   return (
-    <div className="opacity-0 animate-fade-up [animation-delay:500ms]">
+    <div className="opacity-0 animate-fade-up [animation-delay:500ms] w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {suggestions.map((suggestion, index) => (
           <button

@@ -73,7 +73,7 @@ export default function SubstackFinder() {
     <div>
       {/* Top Navigation Bar */}
       <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b z-50">
-        <div className="md:max-w-4xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+        <div className="w-full max-w-5xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
           <a
             href="https://dashboard.exa.ai/playground/"
             target="_blank"
@@ -116,8 +116,8 @@ export default function SubstackFinder() {
         </div>
       </div>
 
-      <div className="flex flex-col min-h-screen w-full md:max-w-5xl z-0">
-        <main className={`flex flex-col flex-grow w-full md:max-w-5xl p-2 md:p-6 pt-20 md:pt-24 ${
+      <div className="flex flex-col min-h-screen w-full max-w-5xl mx-auto z-0">
+        <main className={`flex flex-col flex-grow w-full p-2 md:p-6 pt-20 md:pt-24 ${
           !searchQuery && !isGenerating && searchResults.length === 0 
             ? 'justify-center' 
             : ''
@@ -132,7 +132,7 @@ export default function SubstackFinder() {
           </h1>
 
           <form onSubmit={handleSearch} className="mb-8">
-            <div className="flex gap-0">
+            <div className="flex gap-0 w-full">
               <input
                 type="text"
                 value={searchQuery}
@@ -167,7 +167,7 @@ export default function SubstackFinder() {
               <h2 className="text-2xl font-normal mb-6 text-gray-800 mt-10">
                 Substack Posts
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-4 w-full">
                 {searchResults
                   .filter(post => post.title && post.title.trim() !== '')
                   .map((post, index) => (
