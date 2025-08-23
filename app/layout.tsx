@@ -23,14 +23,16 @@ const reckless = localFont({
 export const metadata: Metadata = {
   title: "Substack Exa Search",
   description: "Search over Substack using Exa API.",
+  metadataBase: new URL("https://substack-exa-search.vercel.app"),
   openGraph: {
     title: "Substack Exa Search",
     description: "Search over Substack using Exa API.",
+    url: "https://substack-exa-search.vercel.app",
     type: "website",
     locale: "en_US",
     images: [
       {
-        url: "/opengraph-image.jpg",
+        url: "https://substack-exa-search.vercel.app/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "Substack Exa Search"
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Substack Exa Search",
     description: "Search over Substack using Exa API.",
-    images: ["/opengraph-image.jpg"]
+    images: ["https://substack-exa-search.vercel.app/opengraph-image.jpg"]
   },
   robots: {
     index: true,
