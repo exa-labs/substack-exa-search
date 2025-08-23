@@ -3,12 +3,14 @@ import { useState, FormEvent } from "react";
 import { SubstackCard } from "./SubstackCard";
 import ResultsLoadingSkeleton from "./ui/ResultsLoadingSkeleton";
 import SearchSuggestions from "./ui/SearchSuggestions";
+import GetCodeModal from "./ui/GetCodeModal";
 
 export default function SubstackFinder() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Handle search from Exa API
   const handleSearchResults = async (query: string) => {
@@ -71,6 +73,8 @@ export default function SubstackFinder() {
 
   return (
     <div>
+      <GetCodeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      
       {/* Top Navigation Bar */}
       <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b z-50">
         <div className="w-full max-w-5xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
@@ -84,20 +88,20 @@ export default function SubstackFinder() {
             <span className="text-sm">Try Exa API</span>
           </a>
           <div className="flex items-center gap-4 text-md text-gray-600">
-            <a
-              href="https://exa.ai/demos"
-              target="_blank"
+            <button
+              onClick={() => setIsModalOpen(true)}
               className="hover:text-[var(--brand-default)] transition-colors"
             >
-              <span className="underline">See More Demos</span>
-            </a>
+              <span className="underline">Get Code</span>
+            </button>
             <span className="text-gray-400">|</span>
             <a
               href="https://github.com/exa-labs/substack-exa-search"
               target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-1.5 hover:text-[var(--brand-default)] transition-colors"
             >
-              <span className="underline">View Project Code</span>
+              <span className="underline">GitHub</span>
               <svg
                 className="w-3.5 h-3.5"
                 fill="none"
