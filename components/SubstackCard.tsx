@@ -59,7 +59,7 @@ export function SubstackCard({
       className="cursor-pointer hover:shadow-md transition-shadow duration-100"
       onClick={() => window.open(post.url, '_blank')}
     >
-      <div className="mb-3 p-6 hover:translate-y-[-2px] md:px-4 md:py-3 bg-secondary-faint hover:bg-secondary-fainter rounded-sm shadow-none border transition-all duration-300 opacity-0 animate-fade-up"
+      <div className="mb-3 p-6 hover:translate-y-[-2px] md:px-4 md:py-3 hover:bg-gray-50 rounded-sm shadow-none border transition-all duration-300 opacity-0 animate-fade-up"
       style={{ animationDelay: `${animationDelay}ms` }}>
         
         <div className="flex justify-between items-start mb-3">
