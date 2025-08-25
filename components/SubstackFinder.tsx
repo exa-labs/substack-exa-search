@@ -140,6 +140,7 @@ export default function SubstackFinder() {
               <input
                 type="text"
                 value={searchQuery}
+                autoFocus
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Substack posts..."
                 className="flex-1 p-3 rounded-none ring-2 ring-brand-default focus:outline-none opacity-0 animate-fade-up [animation-delay:400ms]"
