@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const exa = new Exa(process.env.EXA_API_KEY);
 
     const result = await exa.searchAndContents(
-      query,
+      `Article on topic: ${query}`,
       {
         type: "auto",
         numResults: 20,
