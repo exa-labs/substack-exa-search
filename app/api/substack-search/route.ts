@@ -1,4 +1,4 @@
-// app/api/scrapewebsitesubpages/route.ts
+// app/api/substack-search/route.ts - Posts search only
 import { NextRequest, NextResponse } from 'next/server';
 import Exa from "exa-js";
 
@@ -35,6 +35,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ results: result.results });
   } catch (error) {
     console.error('API Error:', error);
-    return NextResponse.json({ error: `Failed to perform search | ${error}` }, { status: 500 });
+    return NextResponse.json({ error: `Failed to perform posts search | ${error}` }, { status: 500 });
   }
 }

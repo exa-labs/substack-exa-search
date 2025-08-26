@@ -29,7 +29,7 @@ export default function GetCodeModal({ isOpen, onClose }: GetCodeModalProps) {
   --header "x-api-key: EXA_API_KEY" \\
   --data '
 {
-    "query": "blogs about ai",
+    "query": "article about AI",
     "type": "auto",
     "includeDomains": ["*.substack.com"],
     "numResults": 20,
@@ -43,7 +43,7 @@ export default function GetCodeModal({ isOpen, onClose }: GetCodeModalProps) {
 exa = Exa(api_key = "EXA_API_KEY")
 
 result = exa.search_and_contents(
-  "blogs about ai",
+  "article about AI",
   type = "auto",
   include_domains = ["*.substack.com"],
   summary = True,
@@ -55,7 +55,7 @@ result = exa.search_and_contents(
 const exa = new Exa("EXA_API_KEY");
 
 const result = await exa.searchAndContents(
-  "blogs about ai",
+  "article about AI",
   {
     type: "auto",
     includeDomains: ["*.substack.com"],

@@ -11,11 +11,13 @@ export default function SubstackFinder() {
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchMode, setSearchMode] = useState<'posts' | 'writers'>('posts');
 
   // Handle search from Exa API
   const handleSearchResults = async (query: string) => {
     try {
-      const response = await fetch('/api/substack-search', {
+      const endpoint = searchMode === 'posts' ? '/api/substack-search' : '/api/substack-writers';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,14 +137,14 @@ export default function SubstackFinder() {
             Search across Substack using Exa AI
           </h1>
 
-          <form onSubmit={handleSearch} className="mb-8">
+          <form onSubmit={handleSearch} className="mb-4">
             <div className="flex gap-0 w-full">
               <input
                 type="text"
                 value={searchQuery}
                 autoFocus
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search Substack posts..."
+                placeholder={searchMode === 'posts' ? "Search Substack posts..." : "Search Substack writers..."}
                 className="flex-1 p-3 rounded-none ring-2 ring-brand-default focus:outline-none opacity-0 animate-fade-up [animation-delay:400ms]"
               />
               <button
@@ -155,8 +157,36 @@ export default function SubstackFinder() {
             </div>
           </form>
 
+          {/* Search Mode Toggle */}
+          <div className="flex justify-start mb-8 opacity-0 animate-fade-up [animation-delay:450ms]">
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              <button
+                type="button"
+                onClick={() => setSearchMode('posts')}
+                className={`px-6 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  searchMode === 'posts'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Posts
+              </button>
+              <button
+                type="button"
+                onClick={() => setSearchMode('writers')}
+                className={`px-6 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  searchMode === 'writers'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Writers
+              </button>
+            </div>
+          </div>
+
           {!isGenerating && searchResults.length === 0 && (
-            <SearchSuggestions onSuggestionClick={handleSuggestionClick} />
+            <SearchSuggestions onSuggestionClick={handleSuggestionClick} searchMode={searchMode} />
           )}
 
           {error && (
@@ -170,7 +200,7 @@ export default function SubstackFinder() {
           {!isGenerating && searchResults.length > 0 && (
             <>
               <h2 className="text-2xl font-normal mb-6 text-gray-800 mt-10">
-                Substack Posts
+                {searchMode === 'posts' ? 'Substack Posts' : 'Substack Writers'}
               </h2>
               <div className="space-y-4 w-full">
                 {searchResults
@@ -189,7 +219,7 @@ export default function SubstackFinder() {
                 <h2 className="text-xl font-normal mb-6 text-gray-800">
                   Explore More Topics
                 </h2>
-                <SearchSuggestions onSuggestionClick={handleSuggestionClick} />
+                <SearchSuggestions onSuggestionClick={handleSuggestionClick} searchMode={searchMode} />
               </div>
             </>
           )}

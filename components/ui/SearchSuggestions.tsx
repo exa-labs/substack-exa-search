@@ -2,10 +2,11 @@
 
 interface SearchSuggestionsProps {
   onSuggestionClick: (query: string) => void;
+  searchMode: 'posts' | 'writers';
 }
 
-export default function SearchSuggestions({ onSuggestionClick }: SearchSuggestionsProps) {
-  const suggestions = [
+export default function SearchSuggestions({ onSuggestionClick, searchMode }: SearchSuggestionsProps) {
+  const postSuggestions = [
     {
       title: "AI and Machine Learning",
       description: "Latest insights on artificial intelligence and ML trends",
@@ -27,6 +28,31 @@ export default function SearchSuggestions({ onSuggestionClick }: SearchSuggestio
       query: "web3 cryptocurrency blockchain bitcoin ethereum"
     }
   ];
+
+  const writerSuggestions = [
+    {
+      title: "AI & Technology Writers",
+      description: "Writers who cover artificial intelligence and tech trends",
+      query: "AI artificial intelligence technology"
+    },
+    {
+      title: "Business & Finance Writers",
+      description: "Authors focused on startups, investing, and economics",
+      query: "business finance investing startup"
+    },
+    {
+      title: "Climate & Environment Writers",
+      description: "Writers covering sustainability and environmental issues",
+      query: "climate change environment sustainability"
+    },
+    {
+      title: "Crypto & Web3 Writers",
+      description: "Authors covering blockchain and cryptocurrency topics",
+      query: "cryptocurrency blockchain web3 bitcoin"
+    }
+  ];
+
+  const suggestions = searchMode === 'posts' ? postSuggestions : writerSuggestions;
 
   return (
     <div className="opacity-0 animate-fade-up [animation-delay:500ms] w-full">

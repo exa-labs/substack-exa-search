@@ -70,7 +70,7 @@ export function SubstackCard({
         </div>
 
         <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
-          {post.text ? post.summary : post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '')}
+          {post.summary || (post.text ? post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '') : 'No description available')}
         </p>
 
         <div className="flex justify-between items-center text-sm text-gray-400">
