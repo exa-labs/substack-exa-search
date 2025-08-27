@@ -44,9 +44,7 @@ export async function POST(req: NextRequest) {
     const writerContents = await exa.getContents(
       writerUrls,
       {
-        summary: {
-          query: "give me 2 lines summary of this Writer. use simple words."
-        }
+        text: true
       }
     );
 

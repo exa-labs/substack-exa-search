@@ -234,6 +234,7 @@ export default function SubstackFinder() {
                     key={index}
                     post={post}
                     animationDelay={100 + index * 100}
+                    isWriter={searchMode === 'writers'}
                   />
                 ))}
               </div>

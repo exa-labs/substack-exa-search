@@ -25,10 +25,7 @@ export async function POST(req: NextRequest) {
         type: "auto",
         numResults: 20,
         includeDomains: ["*.substack.com"],
-        text: true,
-        summary: {
-          query: "give me 2 lines summary of this substack post. give the most important info. use simple words."
-        }
+        text: true
       }
     );
 

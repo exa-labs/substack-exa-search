@@ -34,7 +34,7 @@ export default function GetCodeModal({ isOpen, onClose }: GetCodeModalProps) {
     "includeDomains": ["*.substack.com"],
     "numResults": 20,
     "contents": {
-      "summary": true
+      "text": true
     }
   }'`;
 
@@ -46,7 +46,7 @@ result = exa.search_and_contents(
   "article about AI",
   type = "auto",
   include_domains = ["*.substack.com"],
-  summary = True,
+  text = True,
   num_results = 20
 )`;
 
@@ -59,7 +59,7 @@ const result = await exa.searchAndContents(
   {
     type: "auto",
     includeDomains: ["*.substack.com"],
-    summary: true,
+    text: true,
     numResults: 20
   }
 );`;

@@ -7,16 +7,17 @@ interface SubstackPost {
   text: string;
   author: string;
   publishedDate: string;
-  summary: string;
   url: string;
 }
 
 export function SubstackCard({ 
   post, 
   animationDelay,
+  isWriter = false,
 }: { 
   post: SubstackPost;
   animationDelay: number;
+  isWriter?: boolean;
 }) {
   
   // Extract year from date, return null if invalid
@@ -44,6 +45,66 @@ export function SubstackCard({
 
   const metaInfo = formatMetaInfo(year, post.author);
 
+  // Extract main heading and subheading from text
+  const extractHeadings = (text: string) => {
+    if (!text) return { heading: '', subheading: '' };
+    
+    const lines = text.split('\n').filter(line => line.trim());
+    let heading = '';
+    let subheading = '';
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Look for main heading (# or ##)
+      if (!heading && (trimmedLine.startsWith('# ') || trimmedLine.startsWith('## '))) {
+        heading = trimmedLine.replace(/^#+\s*/, '').trim();
+        // Remove any markdown links like [text](url)
+        heading = heading.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        continue;
+      }
+      
+      // Look for subheading (### or ####)
+      if (heading && !subheading && (trimmedLine.startsWith('### ') || trimmedLine.startsWith('#### '))) {
+        subheading = trimmedLine.replace(/^#+\s*/, '').trim();
+        // Remove any markdown links
+        subheading = subheading.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        break;
+      }
+    }
+    
+    return { heading, subheading };
+  };
+
+  const { heading, subheading } = extractHeadings(post.text);
+
+  // Extract writer name from text for writer pages
+  const extractWriterName = (text: string) => {
+    if (!text) return '';
+    
+    const lines = text.split('\n').filter(line => line.trim());
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Look for "By [Name]" pattern
+      const byMatch = trimmedLine.match(/^By\s+(.+?)(?:\s*·|\s*$)/i);
+      if (byMatch) {
+        return byMatch[1].trim();
+      }
+      
+      // Look for lines that might contain author info after subscriber count
+      const subscriberMatch = trimmedLine.match(/Over\s+[\d,]+\s+subscribers.*?By\s+(.+?)(?:\s*·|\s*$)/i);
+      if (subscriberMatch) {
+        return subscriberMatch[1].trim();
+      }
+    }
+    
+    return '';
+  };
+
+  const writerName = isWriter ? extractWriterName(post.text) : '';
+
   // Extract domain for display
   const getDomain = (url: string) => {
     try {
@@ -69,9 +130,27 @@ export function SubstackCard({
           <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0 mt-1" />
         </div>
 
-        <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
-          {post.summary || (post.text ? post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '') : 'No description available')}
-        </p>
+        {isWriter ? (
+          writerName ? (
+            <p className="text-gray-600 text-sm mb-3 line-clamp-1">
+              {writerName}
+            </p>
+          ) : (
+            <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
+              {post.text ? post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '') : 'No description available'}
+            </p>
+          )
+        ) : (
+          subheading ? (
+            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+              {subheading}
+            </p>
+          ) : (
+            <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
+              {post.text ? post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '') : 'No description available'}
+            </p>
+          )
+        )}
 
         <div className="flex justify-between items-center text-sm text-gray-400">
           {metaInfo && (
