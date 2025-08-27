@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect, useRef, useCallback } from "react";
 import { SubstackCard } from "./SubstackCard";
 import ResultsLoadingSkeleton from "./ui/ResultsLoadingSkeleton";
 import SearchSuggestions from "./ui/SearchSuggestions";
@@ -12,9 +12,10 @@ export default function SubstackFinder() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchMode, setSearchMode] = useState<'posts' | 'writers'>('posts');
+  const prevSearchModeRef = useRef<'posts' | 'writers'>('posts');
 
   // Handle search from Exa API
-  const handleSearchResults = async (query: string) => {
+  const handleSearchResults = useCallback(async (query: string) => {
     try {
       const endpoint = searchMode === 'posts' ? '/api/substack-search' : '/api/substack-writers';
       const response = await fetch(endpoint, {
@@ -37,7 +38,30 @@ export default function SubstackFinder() {
       setError(error instanceof Error ? error.message : 'An unexpected error occurred.');
       setSearchResults([]);
     }
-  };
+  }, [searchMode]);
+
+  // Trigger search when search mode changes and we have existing results
+  useEffect(() => {
+    // Only trigger if search mode actually changed (not on initial render)
+    if (prevSearchModeRef.current !== searchMode && searchQuery && searchResults.length > 0) {
+      const triggerSearchOnModeChange = async () => {
+        setIsGenerating(true);
+        setError(null);
+        try {
+          await handleSearchResults(searchQuery);
+        } catch (error) {
+          console.error('Error in mode change search:', error);
+        } finally {
+          setIsGenerating(false);
+        }
+      };
+
+      triggerSearchOnModeChange();
+    }
+    
+    // Update the ref to the current search mode
+    prevSearchModeRef.current = searchMode;
+  }, [searchMode, handleSearchResults, searchQuery, searchResults.length]);
 
   const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
