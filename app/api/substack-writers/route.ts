@@ -19,36 +19,18 @@ export async function POST(req: NextRequest) {
     // Initialize Exa client
     const exa = new Exa(process.env.EXA_API_KEY);
 
-    // First, search for writers
-    const searchResult = await exa.searchAndContents(
-      `Writers who write about: ${query}`,
+    const result = await exa.searchAndContents(
+      `writer on topic: ${query}`,
       {
         type: "auto",
-        numResults: 20,
-        includeDomains: ["*.substack.com"]
-      }
-    );
-
-    // Process URLs to remove /p/... paths and get unique writer pages
-    const processedUrls = searchResult.results
-      .map(item => item.url.includes('/p/') ? item.url.split('/p/')[0] : item.url)
-      .filter(url => url.endsWith('.substack.com') || url.includes('.substack.com/'));
-    
-    const writerUrls = Array.from(new Set(processedUrls)).slice(0, 10); // Limit to 10 writers to avoid too many API calls
-
-    if (writerUrls.length === 0) {
-      return NextResponse.json({ results: [] });
-    }
-
-    // Now get the actual writer content using getContents
-    const writerContents = await exa.getContents(
-      writerUrls,
-      {
+        numResults: 30,
+        includeDomains: ["*.substack.com"],
+        excludeDomains: ["substack.com/pub/*", "substack.com/p/*", "substack.com/recommendations"],
         text: true
       }
     );
 
-    return NextResponse.json({ results: writerContents.results });
+    return NextResponse.json({ results: result.results });
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json({ error: `Failed to perform writer search | ${error}` }, { status: 500 });

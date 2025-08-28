@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       `Article on topic: ${query}`,
       {
         type: "auto",
-        numResults: 20,
+        numResults: 30,
         includeDomains: ["*.substack.com"],
         text: true
       }
