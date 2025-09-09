@@ -13,6 +13,7 @@ export default function SubstackFinder() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchMode, setSearchMode] = useState<'posts' | 'writers'>('posts');
   const prevSearchModeRef = useRef<'posts' | 'writers'>('posts');
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handle search from Exa API
   const handleSearchResults = useCallback(async (query: string) => {
@@ -39,6 +40,49 @@ export default function SubstackFinder() {
       setSearchResults([]);
     }
   }, [searchMode]);
+
+  // Debounced search function
+  const performDebouncedSearch = useCallback(async (query: string) => {
+    if (!query || query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsGenerating(true);
+    setError(null);
+
+    try {
+      await handleSearchResults(query);
+    } catch (error) {
+      console.error('Error in debounced search:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [handleSearchResults]);
+
+  // Debounce search input changes
+  const handleQueryChange = useCallback((query: string) => {
+    setSearchQuery(query);
+    
+    // Clear existing timeout
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Set new timeout for debounced search
+    debounceTimerRef.current = setTimeout(() => {
+      performDebouncedSearch(query);
+    }, 500); // 500ms debounce delay
+  }, [performDebouncedSearch]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   // Trigger search when search mode changes and we have existing results
   useEffect(() => {
@@ -71,6 +115,12 @@ export default function SubstackFinder() {
       return;
     }
     
+    // Cancel any pending debounced search
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    
     setIsGenerating(true);
     setError(null);
 
@@ -84,6 +134,12 @@ export default function SubstackFinder() {
   };
   
   const handleSuggestionClick = async (query: string) => {
+    // Cancel any pending debounced search
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+
     setSearchQuery(query);
     setIsGenerating(true);
     setError(null);
@@ -167,7 +223,7 @@ export default function SubstackFinder() {
                 type="text"
                 value={searchQuery}
                 autoFocus
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleQueryChange(e.target.value)}
                 placeholder={searchMode === 'posts' ? "Search Substack posts..." : "Search Substack writers..."}
                 className="flex-1 p-3 rounded-none ring-2 ring-brand-default focus:outline-none opacity-0 animate-fade-up [animation-delay:400ms]"
               />
