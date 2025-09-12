@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const result = await exa.searchAndContents(
       `Article on topic: ${query}`,
       {
-        type: "keyword",
+        type: "fast",
         numResults: 10,
         includeDomains: ["substack.com"],
         text: true
