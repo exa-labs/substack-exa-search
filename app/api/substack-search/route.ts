@@ -1,9 +1,6 @@
 // app/api/substack-search/route.ts - Posts search only
 import { NextRequest, NextResponse } from 'next/server';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
+import { spawn } from 'child_process';
 
 export const maxDuration = 60;
 
@@ -32,30 +29,73 @@ export async function POST(req: NextRequest) {
     
     console.log(`[Posts Search] Request body:`, JSON.stringify(requestBody, null, 2));
     
-    // Use direct curl for maximum performance
+    // Use direct curl spawn (like Python subprocess) for maximum performance
     const curlStartTime = Date.now();
-    const curlCommand = `curl -s -X POST 'https://api.exa.ai/search' \\
-      -H 'x-api-key: ${process.env.EXA_API_KEY}' \\
-      -H 'Content-Type: application/json' \\
-      -d '${JSON.stringify(requestBody).replace(/'/g, "'\\''")}'`;
     
-    const { stdout, stderr } = await execAsync(curlCommand);
-    const curlEndTime = Date.now();
-    const curlTime = curlEndTime - curlStartTime;
-    console.log(`[Posts Search] Curl completed in ${curlTime}ms`);
+    const result = await new Promise<any>((resolve, reject) => {
+      // Direct binary execution - no shell, like Python's subprocess.run()
+      const curl = spawn('curl', [
+        '-s',  // silent
+        '-X', 'POST',
+        'https://api.exa.ai/search',
+        '-H', `x-api-key: ${process.env.EXA_API_KEY}`,
+        '-H', 'Content-Type: application/json',
+        '-d', JSON.stringify(requestBody)
+      ], {
+        stdio: ['pipe', 'pipe', 'pipe']
+      });
 
-    if (stderr) {
-      throw new Error(`Curl error: ${stderr}`);
-    }
+      let stdout = '';
+      let stderr = '';
 
-    const parseStartTime = Date.now();
-    const result = JSON.parse(stdout);
-    const parseEndTime = Date.now();
-    const jsonParseTime = parseEndTime - parseStartTime;
+      curl.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      curl.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      curl.on('close', (code) => {
+        const curlEndTime = Date.now();
+        const curlTime = curlEndTime - curlStartTime;
+        console.log(`[Posts Search] Curl spawn completed in ${curlTime}ms`);
+
+        if (code !== 0) {
+          reject(new Error(`Curl failed with code ${code}: ${stderr}`));
+          return;
+        }
+
+        if (stderr) {
+          reject(new Error(`Curl error: ${stderr}`));
+          return;
+        }
+
+        try {
+          const parseStartTime = Date.now();
+          const parsedResult = JSON.parse(stdout);
+          const parseEndTime = Date.now();
+          const jsonParseTime = parseEndTime - parseStartTime;
+          console.log(`[Posts Search] JSON parsing took ${jsonParseTime}ms`);
+          resolve(parsedResult);
+        } catch (parseError) {
+          reject(parseError);
+        }
+      });
+
+      curl.on('error', (error) => {
+        reject(error);
+      });
+
+      // Set timeout
+      setTimeout(() => {
+        curl.kill();
+        reject(new Error('Curl timeout'));
+      }, 10000);
+    });
     
     const endTime = Date.now();
     const totalResponseTime = endTime - startTime;
-    console.log(`[Posts Search] JSON parsing took ${jsonParseTime}ms`);
     console.log(`[Posts Search] Total API call completed in ${totalResponseTime}ms, returned ${result.results.length} results`);
 
     return NextResponse.json({ results: result.results });
