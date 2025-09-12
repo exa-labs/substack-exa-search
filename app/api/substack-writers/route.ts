@@ -20,10 +20,11 @@ export async function POST(req: NextRequest) {
     const exa = new Exa(process.env.EXA_API_KEY);
 
     const result = await exa.searchAndContents(
-      `writer on topic: ${query} site:substack.com -site:substack.com/pub -site:substack.com/p -site:substack.com/recommendations`,
+      `writer on topic: ${query}`,
       {
         type: "keyword",
         numResults: 10,
+        includeDomains: ["substack.com"],
         text: true
       }
     );
