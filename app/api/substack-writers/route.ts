@@ -19,6 +19,9 @@ export async function POST(req: NextRequest) {
     // Initialize Exa client
     const exa = new Exa(process.env.EXA_API_KEY);
 
+    console.log(`[Writers Search] Starting search for query: "${query}"`);
+    const startTime = Date.now();
+    
     const result = await exa.searchAndContents(
       `writer on topic: ${query}`,
       {
@@ -28,6 +31,10 @@ export async function POST(req: NextRequest) {
         text: true
       }
     );
+    
+    const endTime = Date.now();
+    const responseTime = endTime - startTime;
+    console.log(`[Writers Search] API call completed in ${responseTime}ms, returned ${result.results.length} results`);
 
     return NextResponse.json({ results: result.results });
   } catch (error) {
