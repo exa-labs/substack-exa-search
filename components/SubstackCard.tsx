@@ -136,9 +136,11 @@ export function SubstackCard({
               {writerName}
             </p>
           ) : (
-            <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
-              {post.text ? post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '') : 'No description available'}
-            </p>
+            post.text && (
+              <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
+                {post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '')}
+              </p>
+            )
           )
         ) : (
           subheading ? (
@@ -146,9 +148,11 @@ export function SubstackCard({
               {subheading}
             </p>
           ) : (
-            <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
-              {post.text ? post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '') : 'No description available'}
-            </p>
+            post.text && (
+              <p className="text-gray-700 mb-3 line-clamp-3 text-sm">
+                {post.text.substring(0, 200) + (post.text.length > 200 ? '...' : '')}
+              </p>
+            )
           )
         )}
 

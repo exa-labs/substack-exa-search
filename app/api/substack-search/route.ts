@@ -24,7 +24,9 @@ export async function POST(req: NextRequest) {
       type: "fast",
       numResults: 10,
       includeDomains: ["substack.com"],
-      text: true
+      contents: {
+        text: true
+      }
     };
     
     console.log(`[Posts Search] Request body:`, JSON.stringify(requestBody, null, 2));
