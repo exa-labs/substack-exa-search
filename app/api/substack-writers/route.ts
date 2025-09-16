@@ -23,10 +23,7 @@ export async function POST(req: NextRequest) {
       query: `writer on topic: ${query}`,
       type: "fast",
       numResults: 10,
-      includeDomains: ["substack.com"],
-      contents: {
-        text: true
-      }
+      includeDomains: ["substack.com"]
     };
     
     console.log(`[Writers Search] Request body:`, JSON.stringify(requestBody, null, 2));
